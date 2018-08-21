@@ -20,6 +20,8 @@ const luxonParsers = [
 ];
 
 const numberRegex = /^[0-9]+$/;
+const nowRegex = /^now(-[0-9mhsd,]+)?$/;
+const unitRegex = /^([0-9]+)([mhsd])$/;
 
 function refreshDisplay() {
   const value = mainInput.value.trim();
@@ -31,9 +33,32 @@ function refreshDisplay() {
 
   let interp;
   let luxonValue;
-  if (value === 'now') {
-    interp = 'Now';
+  let nowMatch;
+  if (nowMatch = value.match(nowRegex)) {
+    const minusPart = nowMatch[1];
+    interp = `Now${minusPart || ''}`;
     luxonValue = DateTime.local();
+    if (minusPart) {
+      const timeParts = minusPart.substring(1).split(',');
+      for (const timePart of timeParts) {
+        const unitMatch = timePart.match(unitRegex);
+        if (!unitMatch) {
+          luxonValue = DateTime.invalid(`Bad units`);
+          break;
+        }
+        const scalar = parseInt(unitMatch[1]);
+        const unit = unitMatch[2];
+        const keyForUnit = ({
+          'h': 'hours',
+          'm': 'minutes',
+          'd': 'days',
+          's': 'seconds'
+        })[unit];
+        const duration = {};
+        duration[keyForUnit] = scalar;
+        luxonValue = luxonValue.minus(duration);
+      }
+    }
   } if (numberRegex.test(value)) {
     interp = `Millisecond value since epoch`;
     luxonValue = DateTime.fromMillis(parseInt(value));
