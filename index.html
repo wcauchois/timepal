@@ -8,9 +8,24 @@
     <script src="vendor/moment.min.js"></script>
     <link rel="stylesheet" href="vendor/normalize.css" />
     <link rel="stylesheet" href="vendor/skeleton.css" />
+    <style type="text/css">
+      .container {
+        margin-top: 60px;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
+      <div class="row">
+        <div class="three columns">&nbsp;</div>
+        <div class="six columns">
+          <input class="u-full-width" type="text"
+            id="mainInput" placeholder="Enter any time, or 'now'">
+          <div id="displayContainer">
+          </div>
+        </div>
+        <div class="three columns">&nbsp;</div>
+      </div>
     </div>
     <script src="app.js"></script>
   </body>
