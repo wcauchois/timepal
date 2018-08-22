@@ -5,6 +5,35 @@ const displayContainer = document.getElementById('displayContainer');
 
 mainInput.addEventListener('keyup', () => refreshDisplay());
 
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', e => {
+  mouseX = e.pageX;
+  mouseY = e.pageY;
+});
+
+function showToast(text) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = text;
+  toast.style.left = `${mouseX}px`;
+  toast.style.top = `${mouseY}px`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
+
+// https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
+function copyToClipboard(str) {
+  const el = document.createElement('textarea');
+  el.value = str;
+  el.setAttribute('readonly', '');
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+}
+
 const luxonParsers = [
   [x => DateTime.fromISO(x), `ISO 8601 string`],
   [x => DateTime.fromHTTP(x), `HTTP header date`],
@@ -90,6 +119,12 @@ function refreshDisplay() {
     ];
     let tableBody = '';
     for (const row of rows) {
+      row[row.length - 1] = `
+        <span class="cellContent">${row[row.length - 1]}</span>
+        <a href="#" class="button copyButton">
+          <img src="copy_icon.svg" height="14">
+        </a>
+      `;
       tableBody += '<tr>\n';
       for (const col of row) {
         tableBody += `<td>${col}</td>\n`;
@@ -111,6 +146,17 @@ function refreshDisplay() {
     `;
   }
   displayContainer.innerHTML = content;
+
+  function copyListener(e) {
+    e.preventDefault();
+    const text = e.currentTarget.parentNode.querySelector('.cellContent').textContent;
+    copyToClipboard(text);
+    showToast('Copied');
+  }
+
+  for (const copyButton of displayContainer.querySelectorAll('.copyButton')) {
+    copyButton.addEventListener('click', copyListener);
+  }
 }
 
 function getQueryVariable(name) {

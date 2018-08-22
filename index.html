@@ -12,6 +12,25 @@
       .container {
         margin-top: 60px;
       }
+      .copyButton {
+        padding: 3px;
+        margin: 0 0 0 3px;
+        height: 24px;
+        line-height: 22px;
+        position: relative;
+        top: 1px;
+      }
+      @keyframes toastAnim {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+      .toast {
+        position: absolute;
+        margin: -5px 0 0 15px;
+        animation-name: toastAnim;
+        animation-fill-mode: forwards;
+        animation-duration: 1s;
+      }
     </style>
   </head>
   <body>
