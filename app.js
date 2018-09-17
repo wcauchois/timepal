@@ -41,7 +41,7 @@ const luxonParsers = [
   [x => {
     const parsed = Date.parse(x);
     if (parsed !== NaN) {
-      return DateTime.fromJSDate(parsed);
+      return DateTime.fromMillis(parsed);
     } else {
       return DateTime.invalid(`Failed to parse`);
     }
@@ -93,7 +93,9 @@ function refreshDisplay() {
     luxonValue = DateTime.fromMillis(parseInt(value));
   } else {
     for (const [parser, desc] of luxonParsers) {
+    console.log('evaluating ', desc);
       const parsed = parser(value);
+      console.log('parsed', parsed);
       if (parsed.isValid) {
         luxonValue = parsed;
         interp = desc;
